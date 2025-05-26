@@ -10,20 +10,54 @@ namespace CyberBot2
 {
     class Program
     {
+        static Dictionary<string, List<string>> responses = new Dictionary<string, List<string>>
+        {
+            { "password", new List<string>
+                {
+                    "Make sure to use strong, unique passwords for each account. Avoid using personal details in your passwords.",
+                    "A good password should be at least 12 characters long and include a mix of letters, numbers, and symbols.",
+                    "Consider using a password manager to help you create and store complex passwords."
+                }
+            },
+            { "scam", new List<string>
+                {
+                    "Be cautious of unsolicited messages asking for personal information. Always verify the source.",
+                    "Scammers often create fake websites that look legitimate. Always check the URL before entering any information.",
+                    "If something seems too good to be true, it probably is. Trust your instincts."
+                }
+            },
+            { "privacy", new List<string>
+                {
+                    "Review your privacy settings on social media to control who can see your information.",
+                    "Be mindful of the information you share online. Limit personal details to protect your privacy.",
+                    "Consider using a VPN to enhance your online privacy."
+                }
+            },
+            { "phishing", new List<string>
+                {
+                    "Be cautious of emails asking for personal information. Scammers often disguise themselves as trusted organizations.",
+                    "Look for spelling errors or unusual requests in emails. These can be signs of phishing.",
+                    "Never click on links in unsolicited emails. Instead, visit the website directly."
+                }
+            }
+        };
+
+        static string userName;
+        static string userInterest;
+        static string userSentiment;
+
         static void Main(string[] args)
         {
-            //Play Voice Greeting
+            // Play Voice Greeting
             PlayVoiceGreeting();
 
-            //Show ASCII Art
+            // Show ASCII Art
             DisplayAsciiArt();
 
-            //Get User's Name
+            // Get User's Name
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("\nPlease enter your name: ");
-            string userName = Console.ReadLine();
-            Console.ResetColor();
-
+            userName = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(userName))
             {
                 userName = "Friend";
@@ -35,7 +69,7 @@ namespace CyberBot2
             TypingEffect("Hello " + userName + ", welcome to your Cybersecurity Awareness Assistant!");
             TypingEffect("I'm here to help you stay safe online. Ask me anything!\n");
 
-            //Conversation Loop
+            // Conversation loop 
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -43,43 +77,72 @@ namespace CyberBot2
                 string input = Console.ReadLine().ToLower();
                 Console.ResetColor();
 
-                if (input.Contains("how are you"))
-                    TypingEffect("I'm just a bot, but I'm fully charged and ready to help!");
-                else if (input.Contains("your purpose"))
-                    TypingEffect("My purpose is to educate you on how to stay safe online!");
-                else if (input.Contains("what can i ask"))
-                    TypingEffect("You can ask about password safety, phishing, and safe browsing.");
-                else if (input.Contains("password"))
-                    TypingEffect(@"Safe Password Practices: Use at least 12 characters combining letters, numbers and symbols. 
-                    - Avoid using personal information like birthdays or names.
-                    - Use a password manager to keep track of your passwords safely.
-                ");
-                else if (input.Contains("phishing"))
-                    TypingEffect(@" Phishing Scams:  Phishing is a method cybercriminal use Sto trick you into giving up personal information.
-                    - Be cautious of emails that ask for sensitive information.
-                    - Check emil addresses carefully - small changes can be suspecious.
-                    - Don't click on suspecious links or download unknown attachments.
-                ");
-                else if (input.Contains("safe browsing"))
-                    TypingEffect("Tip: Use HTTPS websites and avoid clicking on suspicious ads or popups.");
-                else if (input.Contains("thank you"))
-                {
-                    TypingEffect("You're welcome! Stay safe out there, " + userName + "! Goodbye!");
-                    break;
-                }
-                else if (input.Contains("exit") || input.Contains("quit"))
+                if (input.Contains("exit") || input.Contains("quit"))
                 {
                     TypingEffect("Stay safe out there, " + userName + "! Goodbye!");
                     break;
                 }
-                else
-                    TypingEffect("I didn’t quite understand that. Could you rephrase?");
+
+                HandleUserInput(input);
             }
         }
 
+        static void HandleUserInput(string input)
+        {
+            //Input validation for general input
+            if (input.Contains("how are you"))
+            {
+                TypingEffect(@"I'm just a bot, but I'm fully charged and ready to help!");
+            }
+            else if (input.Contains("your purpose"))
+            {
+                TypingEffect(@"My purpose is to educate you on how to stay safe online!");
+            }
+            else if (input.Contains("what can i ask"))
+            {
+                TypingEffect(@"You can ask about password safety, phishing, scams, and privacy.");
+            }
+            // User sentiment
+            else if (input.Contains("worried") || input.Contains("concerned"))
+            {
+                userSentiment = "worried";
+                TypingEffect("It's completely understandable to feel that way. Scammers can be very convincing. Let me share some tips to help you stay safe.");
+            }
+            else if (input.Contains("curious"))
+            {
+                userSentiment = "curious";
+                TypingEffect("That's great! Curiosity is key to learning. What would you like to know more about?");
+            }
+            else if (input.Contains("frustrated"))
+            {
+                userSentiment = "frustrated";
+                TypingEffect("I understand that it can be overwhelming. I'm here to help you with any questions you have.");
+            }
+            else if (responses.Keys.Any(k => input.Contains(k)))
+            {
+                foreach (var keyword in responses.Keys)
+                {
+                    // Input validation + randomized responses
+                    if (input.Contains(keyword))
+                    {
+                        Random rand = new Random();
+                        int index = rand.Next(responses[keyword].Count);
+                        TypingEffect(responses[keyword][index]);
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                TypingEffect("I’m not sure I understand. Can you try rephrasing?");
+            }
+        }
+
+
+
         static void PlayVoiceGreeting()
         {
-            string filePath = "C:\\Users\\samke\\source\\repos\\CyberBot\\CyberBot\\bin\\Debug\\Project name (en) v2.wav"; // Path to your WAV file
+            string filePath = "C:\\Users\\samke\\source\\repos\\CyberBot2\\CyberBot2\\bin\\Debug\\Project name (en) v2.wav"; // Path to your WAV file
             using (SoundPlayer player = new SoundPlayer(filePath))
             {
                 try
