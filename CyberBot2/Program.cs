@@ -68,7 +68,6 @@ namespace CyberBot2
             Console.Write("SecureBot: ");
             TypingEffect("Hello " + userName + ", welcome to your Cybersecurity Awareness Assistant!");
             TypingEffect("I'm here to help you stay safe online. Ask me anything!\n");
-
             // Conversation loop 
             while (true)
             {
@@ -101,6 +100,13 @@ namespace CyberBot2
             else if (input.Contains("what can i ask"))
             {
                 TypingEffect(@"You can ask about password safety, phishing, scams, and privacy.");
+            }
+
+            // Store user's interest 
+            else if (input.Contains("interested in"))
+            {
+                userInterest = ExtractInterest(input);
+                TypingEffect($"Great! I’ll remember that you’re interested in {userInterest}. It's a crucial part of staying safe online.");
             }
             // User sentiment
             else if (input.Contains("worried") || input.Contains("concerned"))
@@ -138,11 +144,23 @@ namespace CyberBot2
             }
         }
 
-
+        static string ExtractInterest(string input)
+        {
+            // Simple extraction logic for user interest
+            string[] keywords = { "password", "scam", "privacy", "phishing" };
+            foreach (var keyword in keywords)
+            {
+                if (input.Contains(keyword))
+                {
+                    return keyword;
+                }
+            }
+            return "cybersecurity";
+        }
 
         static void PlayVoiceGreeting()
         {
-            string filePath = "C:\\Users\\samke\\source\\repos\\CyberBot2\\CyberBot2\\bin\\Debug\\Project name (en) v2.wav"; // Path to your WAV file
+            string filePath = "C:\\Users\\samke\\source\\repos\\CyberBot2.1\\CyberBot2.1\\bin\\Debug\\Project name (en) v2.wav"; // Path to your WAV file
             using (SoundPlayer player = new SoundPlayer(filePath))
             {
                 try
