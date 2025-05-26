@@ -68,6 +68,7 @@ namespace CyberBot2
             Console.Write("SecureBot: ");
             TypingEffect("Hello " + userName + ", welcome to your Cybersecurity Awareness Assistant!");
             TypingEffect("I'm here to help you stay safe online. Ask me anything!\n");
+
             // Conversation loop 
             while (true)
             {
@@ -124,12 +125,27 @@ namespace CyberBot2
                 userSentiment = "frustrated";
                 TypingEffect("I understand that it can be overwhelming. I'm here to help you with any questions you have.");
             }
+            else if (input.Contains("confused"))
+            {
+                userSentiment = "confused";
+                TypingEffect("Cybersecurity is a complex subject and is confusing at times. What would you like more clarity on?");
+            }
             else if (responses.Keys.Any(k => input.Contains(k)))
             {
                 foreach (var keyword in responses.Keys)
                 {
+
+                    // Input validation + andomized response + user interest incorporation
+                    if (input.Contains(keyword) && keyword == userInterest)
+                    {
+                        Random rand = new Random();
+                        int index = rand.Next(responses[userInterest].Count);
+                        TypingEffect($"As someone interested in {userInterest}, here is a tip for you:");
+                        TypingEffect(responses[userInterest][index]);
+                        return;
+                    }
                     // Input validation + randomized responses
-                    if (input.Contains(keyword))
+                    else if (input.Contains(keyword))
                     {
                         Random rand = new Random();
                         int index = rand.Next(responses[keyword].Count);
